@@ -2,9 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>New Book</title>
+  <title>{{ heading }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>New Book</h1>
+  <main class="page">
+    <header class="page-header">
+      <h1>{{ heading }}</h1>
+      <p class="meta">Fill in the title, author, and summary.</p>
+    </header>
+
+    {% if error %}
+      <p class="form-error">{{ error }}</p>
+    {% endif %}
+
+    <form class="book-form" method="post" action="{{ action_url }}" novalidate>
+      <label class="form-field">
+        <span class="form-label">Title</span>
+        <input type="text" name="title" value="{{ values.title or '' }}">
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Author</span>
+        <input type="text" name="author" value="{{ values.author or '' }}">
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Summary</span>
+        <textarea name="summary" rows="5">{{ values.summary or '' }}</textarea>
+      </label>
+
+      <label class="form-field">
+        <span class="form-label">Tags</span>
+        <span class="form-help">
+          Separate tags with commas (e.g. fantasy, mystery, classic).
+        </span>
+        <input
+          type="text"
+          name="tags"
+          placeholder="fantasy, mystery, classic"
+          value="{{ values.tags or '' }}"
+        >
+      </label>
+
+      <fieldset class="form-field status-choice">
+        <legend class="form-label">Status</legend>
+        <div class="status-options">
+          {% for status in statuses %}
+            <label class="status-option">
+              <input type="radio" name="status" value="{{ status }}"
+                {% if values.status == status %}checked{% endif %}>
+              <span class="status-option-label">{{ status_labels[status] }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <label class="form-field">
+        <span class="form-label">Progress</span>
+        <span class="form-help">Only required if status is "In progress" (e.g. Page 50 or Chapter 25).</span>
+        <input type="text" name="progress" value="{{ values.progress or '' }}">
+      </label>
+
+      <div class="form-actions">
+        <a class="link-button" href="{{ url_for('home') }}">Back</a>
+        <button type="submit" class="primary-button">{{ submit_label }}</button>
+      </div>
+    </form>
+  </main>
 </body>
 </html>
