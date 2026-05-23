@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <h1>Book tracker</h1>
+      <p class="meta">A tiny book tracking app.</p>
+      <p class="header-actions">
+        <a class="primary-button" href="{{ url_for('new_book') }}">Add a book</a>
+      </p>
+    </header>
+
+    <form method="get" class="search-bar">
+    <input
+      type="text"
+      name="search"
+      placeholder="Search book titles..."
+      value="{{ search_query or '' }}"
+    >
+    <button type="submit" class="primary-button">
+      Search
+    </button>
+  </form>
+
+    {% if books %}
+      <ul class="book-list">
+        {% for book in books %}
+          <li class="book-card">
+            <h2 class="book-title">
+              <a class="book-title-link" href="{{ url_for('edit_book', book_id=book.id) }}">{{ book.title }}</a>
+            </h2>
+            <p class="book-author">by {{ book.author }}</p>
+            {% if book.status %}
+              <p class="book-status">
+                <span class="status-tag status-{{ book.status }}">{{ status_labels[book.status] }}</span>
+              </p>
+            {% endif %}
+
+            {% if book.tags %}
+              <p class="book-tags">
+                {% for tag in book.tags.split(',') %}
+                  <span class="status-tag tag">{{ tag }}</span>
+                {% endfor %}
+              </p>
+            {% endif %}
+            
+            <p class="book-summary">{{ book.summary }}</p>
+            {% if book.progress %}
+              <p class="book-progress">Progress: {{ book.progress }}</p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">No books yet.</p>
+    {% endif %}
+  </main>
+</body>
+</html>
